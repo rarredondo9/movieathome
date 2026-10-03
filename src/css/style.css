@@ -43,3 +43,14 @@ body {
     color: #b00020;
     font-weight: bold;
 }
+
+#filters {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#genre-select {
+    padding: 0.5rem;
+}
