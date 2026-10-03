@@ -72,3 +72,20 @@ body {
     color: #b00020;
     font-weight: bold;
 }
+
+#pager {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+#pager[hidden] {
+    display: none;
+}
+
+#pager button:disabled {
+    opacity: 0.5;
+    cursor: not allowed;
+}

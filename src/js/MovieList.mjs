@@ -19,41 +19,57 @@ function movieCardTemplate(item, mediaType) {
 }
 
 export default class MovieList {
-    constructor(mediaType, listElement, statusElement, services) {
+    constructor(mediaType, listElement, statusElement, services, pager) {
         this.mediaType = mediaType;
         this.listElement = listElement;
         this.statusElement = statusElement;
         this.services = services;
+        this.pager = pager;
+        this.fetchPage = null;
+        this.emptyMessage = '';
     }
 
-    async load(fetchData, emptyMessage = 'No results found.') {
+    async load(fetchPage, page = 1, emptyMessage = 'No results found.') {
+        this.fetchPage = fetchPage;
+        this.emptyMessage = emptyMessage;
         setStatus(this.statusElement, 'Loading...');
         try {
-            const data = await fetchData();
+            const data = await fetchPage(page);
+            const totalPages = Math.min(data.total_pages, 500);
+
             if (data.results.length === 0) {
                 this.listElement.innerHTML = '';
                 setStatus(this.statusElement, emptyMessage);
+                this.pager.update(1, 0);
             } else {
                 setStatus(this.statusElement);
                 this.render(data.results);
+                this.pager.update(data.page, totalPages);
             }
             return data;
-        } catch (error) {
+        }catch (error) {
             this.listElement.innerHTML = '';
             setStatus(this.statusElement, `Sorry, we could not load results. (${error.message})`, true);
-            return null;
+            this.pager.update(1, 0);
+            return null
         }
     }
 
-    init(genreId = '', page = 1) {
-        return this.load(() => this.services.discover(this.mediaType, genreId, page));
+    init(genreId = '') {
+        return this.load ((page) => this.services.discover(this.mediaType, genreId, page));
     }
 
-    search(query, page= 1) {
+    search(query) {
         return this.load(
-            () => this.services.search(this.mediaType, query, page),
+            (page) => this.services.search(this.mediaType, query, page), 1,
             `No results found for "${query}".`
         );
+    }
+
+    async goToPage (page) {
+        const data = await this.load(this.fetchPage, page, this.emptyMessage);
+        window.scrollTo({ top: 0, behavior: 'smooth'});
+        return data;
     }
 
     render(list) {
