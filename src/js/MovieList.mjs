@@ -26,13 +26,13 @@ export default class MovieList {
         this.services = services;
     }
 
-    async init(genreId = '', page = 1) {
+    async load(fetchData, emptyMessage = 'No results found.') {
         setStatus(this.statusElement, 'Loading...');
         try {
-            const data = await this.services.discover(this.mediaType, genreId, page);
+            const data = await fetchData();
             if (data.results.length === 0) {
                 this.listElement.innerHTML = '';
-                setStatus(this.statusElement, 'No results found.');
+                setStatus(this.statusElement, emptyMessage);
             } else {
                 setStatus(this.statusElement);
                 this.render(data.results);
@@ -43,6 +43,17 @@ export default class MovieList {
             setStatus(this.statusElement, `Sorry, we could not load results. (${error.message})`, true);
             return null;
         }
+    }
+
+    init(genreId = '', page = 1) {
+        return this.load(() => this.services.discover(this.mediaType, genreId, page));
+    }
+
+    search(query, page= 1) {
+        return this.load(
+            () => this.services.search(this.mediaType, query, page),
+            `No results found for "${query}".`
+        );
     }
 
     render(list) {

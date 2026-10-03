@@ -5,13 +5,30 @@ import { qs } from './utils.mjs';
 
 const services = new ExternalServices();
 const movieList = new MovieList('movie', qs('#movie-list'), qs('#status'), services);
+const searchInput = qs('#search-input');
+const genreSelect = qs('#genre-select');
 
 movieList.init();
 
 const genreFilter = new GenreFilter(
     'movie',
-    qs('#genre-select'),
+    genreSelect,
     services,
-    (genreId) => movieList.init(genreId)
+    (genreId) => {
+        searchInput.value = '';
+        movieList.init(genreId)
+    }
 );
 genreFilter.init();
+
+qs ('#search-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const query = searchInput.value.trim();
+    genreSelect.value = '';
+
+    if (query) {
+        movieList.search(query);
+    } else {
+        movieList.init();
+    }
+});
