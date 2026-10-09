@@ -2,6 +2,8 @@ import { convertToJson } from "./utils.mjs";
 
 const baseURL = "https://api.themoviedb.org/3";
 const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+const omdbURL = 'https://www.omdbapi.com/';
+const omdbKey = import.meta.env.VITE_OMDB_API_KEY;
 
 export default class ExternalServices {
   async getGenres(mediaType = "movie") {
@@ -31,8 +33,17 @@ export default class ExternalServices {
 
   async getDetails(mediaType, id) {
     const response = await fetch(
-      `${baseURL}/${mediaType}/${id}?api_key=${apiKey}&append_to_response=videos,credits`,
+      `${baseURL}/${mediaType}/${id}?api_key=${apiKey}&append_to_response=videos,credits,external_ids`,
     );
     return convertToJson(response);
+  }
+
+  async getRatings(imdbId) {
+    const response = await fetch(`${omdbURL}?apikey=${omdbKey}&i=${imdbId}`);
+    const data = await response.json();
+    if (data.Response === 'False') {
+      throw new Error(data.Error || 'No ratings found');
+    }
+    return data;
   }
 }

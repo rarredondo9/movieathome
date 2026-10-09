@@ -1,4 +1,4 @@
-import { getPosterUrl, formatRuntime, setStatus } from "./utils.mjs";
+import { getPosterUrl, formatRuntime, setStatus, qs } from "./utils.mjs";
 
 function trailerTemplate(item) {
     const videos = (item.videos && item.videos.results) || [];
@@ -11,7 +11,7 @@ function trailerTemplate(item) {
     return `<div class="trailer">
         <iframe
             src="https://www.youtube-nocookie.com/embed/${trailer.key}"
-            title="Trailer for ${item.title || item.name}
+            title="Trailer for ${item.title || item.name}"
             allow="fullscreen"
             allowfullscreen
             loading="lazy"></iframe>
@@ -22,7 +22,7 @@ function castTemplate(item) {
     const cast = ((item.credits && item.credits.cast) || []).slice(0, 10);
 
     if (cast.length === 0) {
-        return '<p class="details__empty">No cast information vailable.</p>';
+        return '<p class="details__empty">No cast information available.</p>';
     }
 
     const members = cast
@@ -43,6 +43,20 @@ function castTemplate(item) {
     return `<ul class="cast-list">${members}</ul>`;
 }
 
+function ratingsTemplate(data) {
+    const items = (data.Ratings || [])
+        .map((rating) => `<li class="ratings__item">
+            <span class="ratings__source">${rating.Source}</span>
+            <span class="ratings__value">${rating.Value}</span>
+        </li>`)
+        .join('');
+
+    if (!items) {
+        return '<p class="details__empty">No ratings available.</p>';
+    }
+    return `<ul class="ratings__list">${items}</ul>`;
+}
+
 function detailsTemplate(item) {
     const title = item.title || item.name;
     const date = item.release_date || item.first_air_date || '';
@@ -56,14 +70,17 @@ function detailsTemplate(item) {
         ? `<img src="${poster}" alt="Poster for ${title}">`
         : '<div class="no-poster">No image</div>';
 
-    const facts = [year, runtime, genres].filter(Boolean).join(' &middot;');
+    const facts = [year, runtime, genres].filter(Boolean).join(' &middot; ');
 
     return `<div class="details__poster">${image}</div>
         <div class="details__info">
             <h2>${title}</h2>
             <p class="details__facts">${facts}</p>
-            <p class="details_rating">&#9733; TMDb rating; ${rating}</p>
-            <h3>Overvierw</h3>
+            <p class="details__rating">&#9733; TMDb rating: ${rating}</p>
+            <div id="ratings" class="ratings">
+            <p class="details__empty">Loading ratings...</p>
+            </div>
+            <h3>Overview</h3>
             <p>${item.overview || 'No overview available.'}</p>
         </div>
         <section class="details__extras">
@@ -94,9 +111,27 @@ export default class MovieDetails {
             const item = await this.services.getDetails(this.mediaType, this.id);
             setStatus(this.statusElement);
             this.container.innerHTML = detailsTemplate(item);
-            document.title = `${item.title || item.name} |Movies at Home`;
+            document.title = `${item.title || item.name} | Movies at Home`;
+            this.loadRatings(item);
         } catch (error) {
             setStatus(this.statusElement, `Sorry we could not load details. (${error.message})`, true);
+        }
+    }
+
+    async loadRatings(item) {
+        const ratingsBox = qs('#ratings', this.container);
+        const imdbId = item.imdb_id || (item.external_ids && item.external_ids.imdb_id);
+
+        if (!imdbId) {
+            ratingsBox.innerHTML = '<p class="details__empty">No IMDb or Rotten Tomatoes ratings available.</p>';
+            return;
+        }
+
+        try { 
+            const data = await this.services.getRatings(imdbId);
+            ratingsBox.innerHTML = ratingsTemplate(data);
+        } catch {
+            ratingsBox.innerHTML = '<p class="details__empty">Ratings are unavailable right now.</p>';
         }
     }
 }
