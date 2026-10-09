@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rarredondo9/movieathome.git"
+    "url": "git+https://github.com/rarredondo9/moviesathome.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rarredondo9/movieathome/issues"
+    "url": "https://github.com/rarredondo9/moviesathome/issues"
   },
-  "homepage": "https://github.com/rarredondo9/movieathome#readme",
+  "homepage": "https://github.com/rarredondo9/moviesathome#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.12.0",
