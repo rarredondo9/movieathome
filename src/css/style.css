@@ -121,6 +121,55 @@ body {
     color: #555;
 }
 
+.details__extras {
+    grid-column: 1/-1;
+}
+
+.trailer {
+    aspect-ratio: 16/9;
+    max-width: 800px;
+}
+
+.trailer iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 8px;
+}
+
+.details__empty {
+    color: #555;
+}
+
+.cast-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minimax(110px, 1fr));
+    gap: 1rem;
+}
+
+.cast-member img, 
+.cast-member .no-poster {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.cast-member__name {
+    font-weight: bold;
+    margin: 0.5rem 0 0.1rem;
+}
+
+.cast-member__role {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+
 @media (min-width: 700px) {
     #details {
         grid-template-columns: 300px 1fr;
