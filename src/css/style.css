@@ -459,3 +459,56 @@ button:hover:not(:disabled) {
         grid-template-columns: 300px 1fr;
     }
 }
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY();
+    }
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.movie-card {
+    animation: fadeUp 0.4s ease-out both;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.movie-card:hover,
+.movie-card:focus-within {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgb(35 61 77 / 0.15);
+}
+
+.is-popping {
+    animation: pop 0.35s ease-out;
+}
+
+.watchlist-message {
+    min-height: 1.5rem;
+    margin: 0;
+    font-weight: bold;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after{
+        animation: none !important;
+        transition: none !important;
+    }
+}

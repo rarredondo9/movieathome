@@ -83,7 +83,7 @@ function detailsTemplate(item) {
             <p class="details__empty">Loading ratings...</p>
             </div>
             <button type="button" id="watchlist-button" class="watchlist-button">Add to watchlist</button>
-            <p>${item.overview || 'No overview available.'}</p>
+            <p id="watchlist-message" class="watchlist-message" role="status" aria-live="polite">
         </div>
         <section class="details__extras">
             <h3>Trailer</h3>
@@ -142,6 +142,7 @@ export default class MovieDetails {
     setupWatchlistButton(item) {
         const button = qs('#watchlist-button', this.container);
         const title = item.title || item.name;
+        const message = qs('#watchlist-message', this.container);
         const entry = {
             id: item.id,
             mediaType: this.mediaType,
@@ -157,12 +158,18 @@ export default class MovieDetails {
         button.addEventListener('click', () => {
             const added = this.watchlist.toggle(entry);
             refreshButton();
+
+            if (added) {
+                button.classList.add('is-popping');
+            }
             setStatus(
-                this.statusElement,
-                added ? `Added "${title}" to your watchlist.` : `Removed "${title}" from your watchlist.`
+                message,
+                added ? `Added "${title}" to your watchlist.` : `Removed "${title} from your watchlist.`
             );
         });
 
-        refreshButton();
+        button.addEventListener('animationend', () => {
+            button.classList.remove('is-popping');
+        });
     }
 }
