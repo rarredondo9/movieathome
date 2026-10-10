@@ -7,6 +7,19 @@ export default class GenreFilter {
     }
 
     async init() {
+        await this.loadGenres();
+
+        this.selectElement.addEventListener('change', () => {
+            this.onChange(this.selectElement.value);
+        });
+    }
+
+    async loadGenres() {
+        while (this.selectElement.optionslength > 1) {
+            this.selectElement.remove(1);
+        }
+        this.selectElement.value = '';
+
         try {
             const genres = await this.services.getGenres(this.mediaType);
             genres.forEach((genre) => {
@@ -18,9 +31,10 @@ export default class GenreFilter {
         } catch (error) {
             console.error('Could not load genres:', error.message);
         }
+    }
 
-        this.selectElement.addEventListener('change', () => {
-            this.onChange(this.selectElement.value);
-        });
+    async setMediaType(mediaType) {
+        this.mediaType = mediaType;
+        await this.loadGenres();
     }
 }

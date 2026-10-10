@@ -51,3 +51,11 @@ qs('#home-link').addEventListener('click', (event) => {
   movieList.init();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
+qs('#media-toggle').addEventListener('change', (event) => {
+  const mediaType = event.target.value;
+  searchInput.value = '';
+  movieList.mediaType = mediaType;
+  genreFilter.setMediaType(mediaType);
+  movieList.init();
+});

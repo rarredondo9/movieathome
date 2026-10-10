@@ -216,6 +216,22 @@ header h1 a:focus-visible {
     cursor: pointer;
 }
 
+#media-toggle {
+    display: flex;
+    gap: 1rem;
+    border: 0;
+    padding: 0;
+    margin: 0 0 1rem;
+}
+
+#media-toggle legend {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+#media-toggle label {
+    cursor: pointer;
+}
 
 @media (min-width: 700px) {
     #details {
