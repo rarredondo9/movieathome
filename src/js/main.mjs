@@ -43,3 +43,11 @@ qs("#search-form").addEventListener("submit", (event) => {
 });
 
 services.getDetails("movie", 550).then((data) => console.log("Details", data));
+
+qs('#home-link').addEventListener('click', (event) => {
+  event.preventDefault();
+  searchInput.value = '';
+  genreSelect.value = '';
+  movieList.init();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});

@@ -1,4 +1,5 @@
 import { getPosterUrl, formatRuntime, setStatus, qs } from "./utils.mjs";
+import Watchlist from "./Watchlist.mjs";
 
 function trailerTemplate(item) {
     const videos = (item.videos && item.videos.results) || [];
@@ -80,6 +81,7 @@ function detailsTemplate(item) {
             <div id="ratings" class="ratings">
             <p class="details__empty">Loading ratings...</p>
             </div>
+            <button type="button" id="watchlist-button" class="watchlist-button">Add to watchlist</button>
             <h3>Overview</h3>
             <p>${item.overview || 'No overview available.'}</p>
         </div>
@@ -98,6 +100,7 @@ export default class MovieDetails {
         this.container = container;
         this.statusElement = statusElement;
         this.services = services;
+        this.watchlist = new Watchlist();
     }
 
     async init() {
@@ -113,6 +116,7 @@ export default class MovieDetails {
             this.container.innerHTML = detailsTemplate(item);
             document.title = `${item.title || item.name} | Movies at Home`;
             this.loadRatings(item);
+            this.setupWatchlistButton(item);
         } catch (error) {
             setStatus(this.statusElement, `Sorry we could not load details. (${error.message})`, true);
         }
@@ -133,5 +137,32 @@ export default class MovieDetails {
         } catch {
             ratingsBox.innerHTML = '<p class="details__empty">Ratings are unavailable right now.</p>';
         }
+    }
+
+    setupWatchlistButton(item) {
+        const button = qs('#watchlist-button', this.container);
+        const title = item.title || item.name;
+        const entry = {
+            id: item.id,
+            mediaType: this.mediaType,
+            title, 
+            posterPath: item.poster_path,
+        };
+
+        const refreshButton = () => {
+            const saved = this.watchlist.has(item.id, this.mediaType);
+            button.textContent = saved ? 'Remove from watchlist' : 'Add to watchlist';
+        };
+
+        button.addEventListener('click', () => {
+            const added = this.watchlist.toggle(entry);
+            refreshButton();
+            setStatus(
+                this.statusElement,
+                added ? `Added "${title}" to your watchlist.` : `Removed "${title}" from your watchlist.`
+            );
+        });
+
+        refreshButton();
     }
 }
