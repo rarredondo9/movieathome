@@ -78,11 +78,11 @@ function detailsTemplate(item) {
             <h2>${title}</h2>
             <p class="details__facts">${facts}</p>
             <p class="details__rating">&#9733; TMDb rating: ${rating}</p>
+            <p class="details__overview">${item.overview || 'No overview available.'}</p>
             <div id="ratings" class="ratings">
             <p class="details__empty">Loading ratings...</p>
             </div>
             <button type="button" id="watchlist-button" class="watchlist-button">Add to watchlist</button>
-            <h3>Overview</h3>
             <p>${item.overview || 'No overview available.'}</p>
         </div>
         <section class="details__extras">
