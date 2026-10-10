@@ -1,16 +1,18 @@
-import { getPosterUrl, renderListWithTemplate, setStatus } from './utils.mjs';
+import { getPosterUrl, renderListWithTemplate, setStatus, escapeHtml } from './utils.mjs';
 
 function watchlistCardTemplate(item) {
+    const title = escapeHtml(item.title);
     const poster = getPosterUrl(item.posterPath);
-    const image = poster? `<img src="${poster}" alt="Poster for ${item.title}" loading="lazy">`
+    const image = poster
+    ? `<img src="${poster}" alt="Poster for ${title}" loading="lazy">`
     : '<div class="no-poster">No image</div>';
 
     return `<li class="movie-card" data-id="${item.id}" data-media-type="${item.mediaType}">
-        <a href="/details.htmls?id=${item.id}&amp;type=${item.mediaType}" class="movie-card__link">
+        <a href="/details.html?id=${item.id}&amp;type=${item.mediaType}" class="movie-card__link">
             ${image}
-            <h2 class="movie-card__title">${item.title}</h2>
+            <h2 class="movie-card__title">${title}</h2>
             </a>
-            <button type="button" class="remove-button" aria-label="Remove ${item.title} from watchlist">Remove</button>
+            <button type="button" class="remove-button" aria-label="Remove ${title} from watchlist">Remove</button>
     </li>`;
 }
 

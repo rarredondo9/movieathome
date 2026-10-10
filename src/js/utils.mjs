@@ -47,3 +47,12 @@ export function formatRuntime(minutes) {
   const mins = minutes % 60;
   return hours ? `${hours}h ${mins}m` : `${mins}m`;
 }
+
+export function escapeHtml(text = '') {
+  return String(text)
+  .replaceAll('&', '&amp;')
+  .replaceAll('<','&lt;')
+  .replaceAll('>', '$gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#39;');
+}

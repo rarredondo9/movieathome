@@ -1,4 +1,4 @@
-import { getPosterUrl, formatRuntime, setStatus, qs } from "./utils.mjs";
+import { getPosterUrl, formatRuntime, setStatus, qs, escapeHtml } from "./utils.mjs";
 import Watchlist from "./Watchlist.mjs";
 
 function trailerTemplate(item) {
@@ -12,7 +12,7 @@ function trailerTemplate(item) {
     return `<div class="trailer">
         <iframe
             src="https://www.youtube-nocookie.com/embed/${trailer.key}"
-            title="Trailer for ${item.title || item.name}"
+            title="Trailer for ${escapeHtml(item.title || item.name)}"
             allow="fullscreen"
             allowfullscreen
             loading="lazy"></iframe>
@@ -35,8 +35,8 @@ function castTemplate(item) {
 
             return `<li class="cast-member">
                 ${image}
-                <p class="cast-member__name">${person.name}</p>
-                <p class="cast-member__role">${person.character || ''}</p>
+                <p class="cast-member__name">${escapeHtml(person.name)}</p>
+                <p class="cast-member__role">${escapeHtml(person.character) || ''}</p>
             </li>`;
         })
         .join('');
@@ -59,7 +59,7 @@ function ratingsTemplate(data) {
 }
 
 function detailsTemplate(item) {
-    const title = item.title || item.name;
+    const title = escapeHtml (item.title || item.name);
     const date = item.release_date || item.first_air_date || '';
     const year = date.slice(0, 4);
     const runtime = formatRuntime(item.runtime || (item.episode_run_time && item.episode_run_time[0]));
@@ -78,7 +78,7 @@ function detailsTemplate(item) {
             <h2>${title}</h2>
             <p class="details__facts">${facts}</p>
             <p class="details__rating">&#9733; TMDb rating: ${rating}</p>
-            <p class="details__overview">${item.overview || 'No overview available.'}</p>
+            <p class="details__overview">${escapeHtml(item.overview) || 'No overview available.'}</p>
             <div id="ratings" class="ratings">
             <p class="details__empty">Loading ratings...</p>
             </div>

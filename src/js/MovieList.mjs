@@ -1,7 +1,7 @@
-import {getPosterUrl, renderListWithTemplate, setStatus} from './utils.mjs';
+import {getPosterUrl, renderListWithTemplate, setStatus, escapeHtml} from './utils.mjs';
 
 function movieCardTemplate(item, mediaType) {
-    const title = item.title || item.name;
+    const title = escapeHtml(item.title || item.name);
     const date = item.release_date || item.first_air_date || '';
     const year = date.slice(0, 4) || 'Unknown year';
     const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
@@ -11,7 +11,7 @@ function movieCardTemplate(item, mediaType) {
     ? `<img src="${poster}" alt="Poster for ${title}" loading="lazy">`
     : '<div class="no-poster">No Image</div>';
 
-    return `<li class="movie-card" data-id="${item.id}" date-media-type="${mediaType}">
+    return `<li class="movie-card" data-id="${item.id}" data-media-type="${mediaType}">
     <a href="/details.html?id=${item.id}&amp;type=${mediaType}" class="movie-card__link">${image}
         <h2 class="movie-card__title">${title}</h2>
         <p class="movie-card__info">${year} &middot; &#9733; ${rating}</p>
